@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.home.NewGroupFragment">
+
+    <ImageView
+        android:id="@+id/new_group_user_image"
+        android:layout_width="48dp"
+        android:layout_height="56dp"
+        android:contentDescription="@string/post_image_view"
+        app:layout_constraintBottom_toBottomOf="@id/new_group_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/new_group_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/popup_edittext_style"
+        android:ems="10"
+        android:hint="@string/title_group"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/new_group_user_image"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/new_group_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/popup_edittext_style"
+        android:hint="@string/desc_group"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/new_group_title" />
+
+    <ImageView
+        android:id="@+id/new_group_image"
+        android:layout_width="0dp"
+        android:layout_height="225dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/post_image_view"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_group_desc"
+        app:srcCompat="@drawable/placeholder_image" />
+
+    <ImageView
+        android:id="@+id/upload_group_image"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/circle_bg"
+        android:padding="12dp"
+        android:contentDescription="@string/post_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_group_image"
+        app:layout_constraintBottom_toBottomOf="@id/new_group_image"
+        app:srcCompat="@drawable/ic_create_black_24dp" />
+
+    <ProgressBar
+        android:id="@+id/new_group_pb"
+        style="?android:attr/progressBarStyle"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/upload_group_image"
+        app:layout_constraintEnd_toEndOf="@id/upload_group_image"
+        app:layout_constraintStart_toStartOf="@id/upload_group_image"
+        app:layout_constraintTop_toTopOf="@id/upload_group_image" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

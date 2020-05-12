@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.anchat.ui.home.GroupFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_group">
+
+        <action
+            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
+            app:destination="@id/nav_group_details"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_posts"
+            app:destination="@id/nav_posts" />
+        <action
+            android:id="@+id/action_nav_home_to_newGroupFragment"
+            app:destination="@id/nav_new_group" />
+        <action
+            android:id="@+id/action_nav_home_to_userProfileFragment"
+            app:destination="@id/nav_user_profile" />
+        <action
+            android:id="@+id/action_nav_home_to_slideshowFragment"
+            app:destination="@id/nav_slideshow" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_group_details"
+        android:name="com.example.anchat.ui.home.GroupDetailsFragment"
+        android:label="@string/group_details"
+        tools:layout="@layout/fragment_group_details">
+
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_nav_group_details_to_nav_posts"
+            app:destination="@id/nav_posts" />
+        <action
+            android:id="@+id/action_nav_group_details_to_nav_new_post"
+            app:destination="@id/nav_new_post" />
+        <action
+            android:id="@+id/action_nav_group_details_to_nav_post_details"
+            app:destination="@id/nav_post_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_posts"
+        android:name="com.example.anchat.ui.posts.PostFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_posts" >
+        <action
+            android:id="@+id/action_nav_posts_to_newPostFragment"
+            app:destination="@id/nav_new_post" />
+        <action
+            android:id="@+id/action_nav_posts_to_postDetailsFragment"
+            app:destination="@id/nav_post_details" />
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_new_post"
+        android:name="com.example.anchat.ui.posts.NewPostFragment"
+        android:label="NewPostFragment"
+        tools:layout="@layout/fragment_new_post">
+        <action
+            android:id="@+id/action_nav_new_post_to_nav_group_details"
+            app:destination="@id/nav_group_details" >
+            <argument
+                android:name="position"
+                android:defaultValue="0" />
+        </action>
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_post_details"
+        android:name="com.example.anchat.ui.posts.PostDetailsFragment"
+        android:label="PostDetailsFragment"
+        tools:layout="@layout/fragment_post_details">
+        <argument
+            android:name="item_position"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_new_group"
+        android:name="com.example.anchat.ui.home.NewGroupFragment"
+        android:label="Create Group"
+        tools:layout="@layout/fragment_new_group" />
+    <fragment
+        android:id="@+id/nav_user_profile"
+        android:name="com.example.anchat.ui.home.UserProfileFragment"
+        android:label="user_profile_fragment"
+        tools:layout="@layout/user_profile_fragment" >
+        <action
+            android:id="@+id/action_nav_user_profile_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.example.anchat.ui.slideshow.SlideshowFragment"
+        android:label="fragment_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+</navigation>
