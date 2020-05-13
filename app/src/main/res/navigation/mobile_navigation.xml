@@ -99,7 +99,11 @@
         android:id="@+id/nav_new_group"
         android:name="com.example.anchat.ui.home.NewGroupFragment"
         android:label="Create Group"
-        tools:layout="@layout/fragment_new_group" />
+        tools:layout="@layout/fragment_new_group" >
+        <action
+            android:id="@+id/action_nav_new_group_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
     <fragment
         android:id="@+id/nav_user_profile"
         android:name="com.example.anchat.ui.home.UserProfileFragment"

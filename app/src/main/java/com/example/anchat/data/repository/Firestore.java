@@ -25,6 +25,7 @@ public class Firestore {
     private static final String USERS_GROUPS = "USERS_GROUPS";
     private static final String GROUPS_USERS = "GROUPS_USERS";
     private static final String POSTS_COMMENTS = "POSTS_COMMENTS";
+    private Groups groups = new Groups();
 
 
 

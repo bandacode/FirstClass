@@ -86,7 +86,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             groupImage = itemView.findViewById(R.id.group_image);
             groupDetailsCardView = itemView.findViewById(R.id.group_item);
             viewGroup = itemView.findViewById(R.id.view_group_button);
+
             viewGroup.setOnClickListener(this);
+            groupDetailsCardView.setOnClickListener(this);
 
         }
 
@@ -108,9 +110,11 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         @Override
         public void onClick(View view) {
             onGroupItemClicked.onGroupClick(getAdapterPosition());
+
         }
     }
     public interface OnGroupItemClicked{
         void onGroupClick(int position);
     }
+
 }

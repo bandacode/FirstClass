@@ -28,13 +28,17 @@ import com.example.anchat.R;
 import com.example.anchat.data.model.Groups;
 import com.example.anchat.data.model.Posts;
 import com.example.anchat.data.model.Users;
+import com.example.anchat.data.repository.Firestore;
 import com.example.anchat.data.repository.PostsRepo;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -111,11 +115,9 @@ public class NewPostFragment extends Fragment {
         firebaseFirestore = FirebaseFirestore.getInstance();
         mFireStorage = FirebaseStorage.getInstance();
         mStoreReference = mFireStorage.getReference();
-        posts = new Posts();
-        groups = new Groups();
         postsRepo = new PostsRepo();
+        posts = new Posts();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-
 
         position = NewPostFragmentArgs.fromBundle(getArguments()).getPosition();
 
@@ -148,27 +150,7 @@ public class NewPostFragment extends Fragment {
 
     }
 
-    private void createPosts(){
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null){
 
-            Glide.with(getContext())
-                    .load(firebaseUser.getPhotoUrl())
-                    .into(authorImage);
-            String postImage = posts.getPostImageURL();
-            String postText = postTitle.getText().toString();
-            String postBodyText = postBody.getText().toString();
-            String postID = posts.getPostID();
-            String groupID = groups.getGroupId();
-            if (postBodyText.length() != 0 && postText.length() != 0){
-                Toast.makeText(getContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
-            } else {
-                Posts posts = new Posts(new Users(firebaseUser), postID, postText, postBodyText, postImage, groupID);
-                postsRepo.addPostData(posts);
-            }
-
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -176,7 +158,7 @@ public class NewPostFragment extends Fragment {
         assert data != null;
         final Uri postImage = data.getData();
         assert postImage != null;
-        final StorageReference postImagesRef = mStoreReference.child("group_images");
+        final StorageReference postImagesRef = mStoreReference.child("post_images");
         final UploadTask uploadTask = postImagesRef.putFile(postImage);
         Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
@@ -203,6 +185,33 @@ public class NewPostFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void createPosts(){
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null){
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+            Glide.with(getContext())
+                    .load(firebaseUser.getPhotoUrl())
+                    .into(authorImage);
+
+
+            DocumentReference documentReference = firebaseFirestore.collection("GROUPS").document();
+
+
+            String postText = postTitle.getText().toString(); // Getting text details from Edit text
+            String postBodyText = postBody.getText().toString();
+            String postID = posts.getPostID();
+            String groupID = groups.getGroupId();
+            if (postBodyText.length() == 0 && postText.length() == 0){
+                Toast.makeText(getContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+            } else {
+                final  Posts posts = new Posts(new Users(firebaseUser), postID, postText, postBodyText, groupID);
+                postsRepo.addPostData(posts);
+
+            }
+        }
     }
 
 

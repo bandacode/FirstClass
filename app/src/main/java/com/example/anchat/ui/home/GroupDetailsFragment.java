@@ -103,15 +103,6 @@ private PostAdapter mPostAdapter;
             }
         });
 
-//        mCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                int newPosition = PostFragmentArgs.fromBundle(getArguments()).getPosition();
-//                    onPostClick(position);
-//            }
-//        });
-
-
 
 
     }

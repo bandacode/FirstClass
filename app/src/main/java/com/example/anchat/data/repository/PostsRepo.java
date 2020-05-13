@@ -1,5 +1,6 @@
 package com.example.anchat.data.repository;
 
+import android.media.MediaDrm;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ public class PostsRepo {
 
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = firestore.collection("POSTS");
+    private CollectionReference commentCollection = firestore.collection("COMMENTS");
     private Posts posts = new Posts();
     private Groups groups = new Groups();
     private FirebaseUser user;
@@ -51,7 +53,8 @@ public class PostsRepo {
 //    Method to retrieve data from database
     public  void getPostData(){
         Log.d(TAG, "getPostData: called");
-        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        collectionReference.
+                get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful() && task.getResult() != null){
@@ -73,7 +76,6 @@ public class PostsRepo {
         Log.d(TAG, "addPostData: Post Data added");
         this.posts = posts;
 
-
         final DocumentReference docRef = firestore.collection("POSTS").document();
                 docRef.set(posts)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -88,12 +90,12 @@ public class PostsRepo {
             }
         });
 
-
     }
 
     public void addCommentToPosts( Posts posts1, Comments comments){
         Log.d(TAG, "addCommentToPosts: Comment added to post");
         this.posts = posts1;
+        this.comments = comments;
         firestore.collection("COMMENTS").add(comments).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -106,11 +108,10 @@ public class PostsRepo {
                 Log.w(TAG, "Error adding document", e);
             }
         });
-
     }
 
-    public  void getCommentData(){
-        Log.d(TAG, "getPostData: called");
+    public void getCommentData(){
+        Log.d(TAG, "getComment: called");
         collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

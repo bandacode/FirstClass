@@ -28,10 +28,7 @@ import com.example.anchat.data.model.Posts;
 import com.example.anchat.data.model.Users;
 import com.example.anchat.data.repository.PostsRepo;
 import com.example.anchat.utils.DateUtil;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -78,14 +75,14 @@ public class PostDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         Log.d(TAG, "onViewCreated Post Details: Position:" + position);
         super.onViewCreated(view, savedInstanceState);
+        mFirestore = FirebaseFirestore.getInstance();
         navController = Navigation.findNavController(view);
         mRecyclerView = view.findViewById(R.id.comment_recycler_view);
-        mPostAdapter = new PostAdapter();
         mCommentAdapter = new CommentAdapter();
-        mFirestore = FirebaseFirestore.getInstance();
         mPosts = new Posts();
         mPostsRepo = new PostsRepo();
         comments = new Comments();
+        mPostAdapter = new PostAdapter();
 //        Ini text
         mPostDetailsTitle = view.findViewById(R.id.postDetailsTitle);
         mPostDetailsDescription = view.findViewById(R.id.post_detail_desc);
@@ -95,6 +92,7 @@ public class PostDetailsFragment extends Fragment {
         mPostDetailsImage = view.findViewById(R.id.postDetailsImage);
         mPostDetailsAuthorImage = view.findViewById(R.id.comment_author_image);
         mAddCommentToPost = view.findViewById(R.id.button_add_comment);
+
 //        Edit text
         mWriteComment = view.findViewById(R.id.editText_add_comment);
 
@@ -104,33 +102,9 @@ public class PostDetailsFragment extends Fragment {
         mAddCommentToPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                mUser = FirebaseAuth.getInstance().getCurrentUser();
-                DocumentReference docRef = mFirestore.collection("COMMENTS").document();
-                if (mUser != null){
-                    String newComment = mWriteComment.getText().toString();
-                    String postId = mPosts.getPostID();
-                    String commentID = docRef.getId();
-                    if (newComment.equals("")){
-                        Toast.makeText(getContext(), "Field cannot be empty", Toast.LENGTH_LONG).show();
-
-                    } else {
-                        comments = new Comments(newComment, commentID, new Users(mUser), postId );
-                        Log.d(TAG, "onClick: Post ID"  + postId);
-                        mPostsRepo.addCommentToPosts(mPosts, comments);
-                        Toast.makeText(getContext(), "Comment Added", Toast.LENGTH_LONG).show();
-                        mWriteComment.setText("");
-                    }
-
-
-
-                }
-
+                addComment();
             }
         });
-
-
-
 
     }
 
@@ -138,14 +112,14 @@ public class PostDetailsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setUpPostViewModel();
-        setUpCommentsViewModel();
+//        setUpCommentsViewModel();
         System.out.println(comments);
     }
 
     private void setUpRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-//        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
 
         mRecyclerView.setAdapter(mCommentAdapter);
     }
@@ -186,9 +160,31 @@ public class PostDetailsFragment extends Fragment {
             public void onChanged(List<Comments> commentsList) {
                 mCommentAdapter.setCommentsList(commentsList);
                 mCommentAdapter.notifyDataSetChanged();
-
             }
         });
     }
 
+private void addComment(){
+    mUser = FirebaseAuth.getInstance().getCurrentUser();
+    DocumentReference docRef = mFirestore.collection("COMMENTS").document();
+    if (mUser != null){
+        Glide.with(getContext())
+                .load(mUser.getPhotoUrl())
+                .into(mPostDetailsAuthorImage);
+        String newComment = mWriteComment.getText().toString();
+        String postId = mPosts.getPostID();
+        String commentID = docRef.getId();
+        if (newComment.length() == 0){
+            Toast.makeText(getContext(), "Field cannot be empty", Toast.LENGTH_LONG).show();
+
+        } else {
+            Comments comments = new Comments(newComment, commentID, new Users(mUser), postId );
+            Log.d(TAG, "onClick: Post ID"  + postId);
+            mPostsRepo.addCommentToPosts(mPosts, comments);
+            Toast.makeText(getContext(), "Comment Added", Toast.LENGTH_LONG).show();
+            mWriteComment.setText("");
+        }
+
+    }
+}
 }

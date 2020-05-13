@@ -8,10 +8,20 @@ import com.google.firebase.auth.FirebaseUser;
 public class Users implements Parcelable {
     public String userID;
     public String profileName;
+
     public String pictureUrl;
     public String emailAddress;
+    public String aboutUser;
 
     public Users (){}
+
+    public Users(String userID, String profileName, String pictureUrl, String emailAddress, String aboutUser) {
+        this.userID = userID;
+        this.profileName = profileName;
+        this.pictureUrl = pictureUrl;
+        this.emailAddress = emailAddress;
+        this.aboutUser = aboutUser;
+    }
 
     public Users(String userID, String profileName, String pictureUrl, String emailAddress) {
         this.userID = userID;
@@ -55,6 +65,15 @@ public class Users implements Parcelable {
     public void setProfileName(String profileName) {
         this.profileName = profileName;
     }
+
+    public String getAboutUser() {
+        return aboutUser;
+    }
+
+    public void setAboutUser(String aboutUser) {
+        this.aboutUser = aboutUser;
+    }
+
 
     public String getPictureUrl() {
         return pictureUrl;

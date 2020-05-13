@@ -42,6 +42,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: comment data bind");
         Comments comments = commentsList.get(position);
+        Glide.with(mContext).load(comments.getCommentsAuthor().getPictureUrl())
+                .centerCrop().override(80,80).into(holder.authorImage);
         holder.bind(mContext, comments);
 
 
@@ -71,8 +73,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 authorImage.setVisibility(View.GONE);
             } else {
                 authorImage.setVisibility(View.VISIBLE);
-                Glide.with(context).load(comments.getCommentsAuthor().getPictureUrl())
-                        .centerCrop().override(80,80).into(authorImage);
+
             }
             mAuthorName.setText(comments.getCommentsAuthor().getProfileName());
             mComment.setText(comments.getCommentText());

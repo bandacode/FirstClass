@@ -8,6 +8,9 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,6 +32,7 @@ import com.example.anchat.data.model.Groups;
 import com.example.anchat.data.model.Posts;
 import com.example.anchat.data.model.Users;
 import com.example.anchat.data.repository.Firestore;
+import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,17 +57,40 @@ public class NewGroupFragment extends Fragment {
     private ImageView mUploadGroupImage, mUserImage;
     private FirebaseUser mUser;
 
-      private Firestore mFirestoreRepo;
+    private Firestore mFirestoreRepo;
     private FirebaseUser firebaseUser;
     private NavController navController;
 
-    private Groups mGroupDetails;
+    private Groups mGroupDetails, group1;
     private Users userDetails;
     private Posts mPosts;
 
 
     public NewGroupFragment() {
         // Required empty public constructor
+    }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.post, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_save:
+//                saveGroup
+                addGroupToFirestore();
+                navController.navigate(R.id.action_nav_new_group_to_nav_home);
+                Toast.makeText(getContext(), "Group details saved", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_cancel:
+//                cancel and navigate back to group details
+                navController.navigate(R.id.action_nav_new_group_to_nav_home);
+                Toast.makeText(getContext(), "Create group cancelled", Toast.LENGTH_LONG).show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -96,6 +123,7 @@ public class NewGroupFragment extends Fragment {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         mGroupDetails = new Groups();
+        group1 = new Groups();
         mFirestoreRepo = new Firestore();
         navController = Navigation.findNavController(view);
 
@@ -136,23 +164,30 @@ public class NewGroupFragment extends Fragment {
             String image = mGroupDetails.getGroupImageUrl();
             String groupID = documentReference.getId();
             String userID = firebaseUser.getUid();
-            mGroupDetails = new Groups(groupID, title,desc,image, userID);
+            if (title.length() == 0 && desc.length() ==0){
+                Toast.makeText(getContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+            } else {
+                mGroupDetails = new Groups(groupID, title,desc,image, userID);
+                Firestore.getGroupsReference(mFiresbaseFirestore).add(mGroupDetails).
+                        addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e); }
+                });
+            }
 
 
-            Firestore.getGroupsReference(mFiresbaseFirestore).add(mGroupDetails).
-                    addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
 
-                            Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error adding document", e); }
-            });
+
         }
-        }
+
+
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -166,7 +201,7 @@ public class NewGroupFragment extends Fragment {
         assert data != null;
         final Uri groupImage = data.getData();
         assert groupImage != null;
-        final StorageReference groupImagesRef = mStoreReference.child("group_images");
+        final StorageReference groupImagesRef = mStoreReference.child("group_images/");
         final UploadTask uploadTask = groupImagesRef.putFile(groupImage);
         Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override

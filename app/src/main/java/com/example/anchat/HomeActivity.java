@@ -1,6 +1,8 @@
 package com.example.anchat;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +16,14 @@ import com.bumptech.glide.Glide;
 import com.example.anchat.ui.home.GroupFragment;
 import com.example.anchat.ui.posts.PostFragment;
 import com.example.anchat.ui.slideshow.SlideshowFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
@@ -35,6 +40,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private NavController navController;
     private FirebaseUser firebaseUser;
     private FirebaseAuth mAuth;
+    public static FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "HomeActivity";
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -76,6 +83,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_user_profile:
+                startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+                return true;
+            case R.id.action_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                finish();
+                startActivity(new Intent(this, MainActivity.class));
+                mAuth.removeAuthStateListener(mAuthListener);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
 //        Ensure menu items in the Nav Drawer stay in sync with the navGraph
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -92,9 +116,9 @@ public void updateNavHeader(){
     TextView navEmail = headerView.findViewById(R.id.nav_user_email);
     ImageView navUserImage = headerView.findViewById(R.id.nav_user_profile);
 
+
     navUsername.setText(firebaseUser.getDisplayName());
     navEmail.setText(firebaseUser.getEmail());
-
 
     Glide.with(this)
             .load(firebaseUser.getPhotoUrl())
@@ -119,6 +143,7 @@ public void updateNavHeader(){
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     @Override
     public void onBackPressed() {

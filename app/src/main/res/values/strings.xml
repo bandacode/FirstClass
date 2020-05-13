@@ -95,13 +95,12 @@
     <string name="no_group_explanation">Be the first to add a group by clicking on the button below</string>
 
 
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="group_image">Group Image</string>
     <string name="title_group">Title</string>
     <string name="desc_group">Description</string>
     <string name="action_join_group">Join</string>
-    <string name ="action_add_comment">Add</string>
+    <string name="action_add_comment">Add</string>
     <string name="action_upload_image">Upload image</string>
     <string name="user_display_name">User Display Name</string>
     <string name="view_profile">View Profile</string>
@@ -127,5 +126,14 @@
     <string name="add_comment">Add comment</string>
     <string name="text_comment_goes_here">Text Comment Goes Here</string>
     <string name="comment_date">10:20</string>
+    <string name="location">Location</string>
+    <string name="phone_address">Phone Address</string>
+    <string name="about_user">About User</string>
+    <string name="user_bio">Enter your bio</string>
+    <string name="name">Name</string>
+    <string name="choose_an_image">Choose an image</string>
+    <string name="edit_your_profile">Edit your profile</string>
+    <string name="about">About</string>
+    <string name="update_profile">Update</string>
 
 </resources>
