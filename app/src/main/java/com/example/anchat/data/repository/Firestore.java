@@ -9,13 +9,11 @@ import com.example.anchat.data.model.Comments;
 import com.example.anchat.data.model.Groups;
 import com.example.anchat.data.model.Posts;
 import com.example.anchat.data.model.Users;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
 
 public class Firestore {
 
@@ -26,8 +24,6 @@ public class Firestore {
     private static final String GROUPS_USERS = "GROUPS_USERS";
     private static final String POSTS_COMMENTS = "POSTS_COMMENTS";
     private Groups groups = new Groups();
-
-
 
 
     //    Collection and Document References
@@ -103,14 +99,14 @@ public class Firestore {
     }
 
 
-//    Post to group
-public static void postToGroup(FirebaseFirestore firestore, String groupId, Posts post) {
-    firestore.collection(GROUPS)
-            .document(groupId)
-            .collection(GROUP_POSTS)
-            .document(post.getPostID())
-            .set(post);
-}
+    //    Post to group
+    public static void postToGroup(FirebaseFirestore firestore, String groupId, Posts post) {
+        firestore.collection(GROUPS)
+                .document(groupId)
+                .collection(GROUP_POSTS)
+                .document(post.getPostID())
+                .set(post);
+    }
 
     public static void addCommentToPost(FirebaseFirestore firestore, Groups group, Posts post, Comments comment) {
         firestore.collection(GROUPS)

@@ -1,23 +1,26 @@
 package com.example.anchat.data.model;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.google.firebase.firestore.DocumentId;
 
 import java.util.Date;
 import java.util.UUID;
 
 public class Comments implements Parcelable {
+
+    @DocumentId
+    private String commentID;
     private String commentText;
     private Date commentTimestamp;
-    private String commentID;
     private Users commentsAuthor;
     private String postID;
 
     public Comments() {
     }
 
-    public Comments(String commentText, Users commentsAuthor){
+    public Comments(String commentText, Users commentsAuthor) {
         this.commentText = commentText;
         this.commentID = UUID.randomUUID().toString();
         this.commentsAuthor = commentsAuthor;

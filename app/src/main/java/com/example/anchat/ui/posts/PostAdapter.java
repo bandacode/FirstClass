@@ -16,7 +16,6 @@ import com.example.anchat.R;
 import com.example.anchat.data.model.Posts;
 import com.example.anchat.utils.DateUtil;
 
-import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -37,11 +36,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
 
-    public PostAdapter(OnPostItemClicked onPostItemClicked){
+    public PostAdapter(OnPostItemClicked onPostItemClicked) {
         this.onPostItemClicked = onPostItemClicked;
     }
 
-    public PostAdapter(){}
+    public PostAdapter() {
+    }
 
     @NonNull
     @Override
@@ -63,7 +63,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return postListModels == null ? 0 : postListModels.size();
     }
 
-    public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView authorName;
         private TextView postTitle;
@@ -83,13 +83,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         }
 
-        void bind(Context context, final Posts posts){
-            if (posts.getPostAuthor().getPictureUrl() == null){
+        void bind(Context context, final Posts posts) {
+            if (posts.getPostAuthor().getPictureUrl() == null) {
                 authorImage.setVisibility(View.GONE);
             } else {
                 authorImage.setVisibility(View.VISIBLE);
                 Glide.with(context).load(posts.getPostAuthor().getPictureUrl())
-                        .centerCrop().override(80,80).into(authorImage);
+                        .centerCrop().override(80, 80).into(authorImage);
             }
             authorName.setText(posts.getPostAuthor().getProfileName());
             postTitle.setText(posts.getPostTitle());
@@ -102,7 +102,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         }
     }
-    public interface OnPostItemClicked{
+
+    public interface OnPostItemClicked {
         void onPostClick(int position);
     }
 }

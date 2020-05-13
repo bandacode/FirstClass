@@ -20,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -30,6 +32,7 @@ import com.example.anchat.data.model.Posts;
 import com.example.anchat.data.model.Users;
 import com.example.anchat.data.repository.Firestore;
 import com.example.anchat.data.repository.PostsRepo;
+import com.example.anchat.ui.home.GroupViewModel;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +47,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.List;
 
 public class NewPostFragment extends Fragment {
     private static final String TAG = "NewPostFragment";
@@ -63,15 +67,13 @@ public class NewPostFragment extends Fragment {
     private Groups groups;
     private PostViewModel mViewModel;
     private int position;
+    private String groupId;
     private ProgressBar newPostPb;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-
     }
 
     @Override
@@ -111,7 +113,7 @@ public class NewPostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
+        setGroupViewModel();
         firebaseFirestore = FirebaseFirestore.getInstance();
         mFireStorage = FirebaseStorage.getInstance();
         mStoreReference = mFireStorage.getReference();
@@ -150,7 +152,16 @@ public class NewPostFragment extends Fragment {
 
     }
 
+    private void setGroupViewModel() {
+        GroupViewModel mGroupViewModel = new ViewModelProvider(getActivity()).get(GroupViewModel.class);
+        mGroupViewModel.getGroups().observe(getViewLifecycleOwner(), new Observer<List<Groups>>() {
+            @Override
+            public void onChanged(List<Groups> groupsList) {
 
+                groupId = groupsList.get(position).groupId;
+            }
+        });
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -190,30 +201,21 @@ public class NewPostFragment extends Fragment {
     private void createPosts(){
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null){
-            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
             Glide.with(getContext())
                     .load(firebaseUser.getPhotoUrl())
                     .into(authorImage);
 
-
-            DocumentReference documentReference = firebaseFirestore.collection("GROUPS").document();
-
-
             String postText = postTitle.getText().toString(); // Getting text details from Edit text
             String postBodyText = postBody.getText().toString();
-            String postID = posts.getPostID();
-            String groupID = groups.getGroupId();
             if (postBodyText.length() == 0 && postText.length() == 0){
                 Toast.makeText(getContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
             } else {
-                final  Posts posts = new Posts(new Users(firebaseUser), postID, postText, postBodyText, groupID);
+                final  Posts posts = new Posts(new Users(firebaseUser), postText, postBodyText, groupId);
                 postsRepo.addPostData(posts);
-
             }
         }
     }
-
 
     private void showImage(String url){
         if (url != null && !url.isEmpty()){

@@ -47,7 +47,6 @@ public class PostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         mRecyclerView = view.findViewById(R.id.post_feed_recycler_view);
         mPostAdapter = new PostAdapter();
         mPosts = new Posts();
@@ -74,7 +73,6 @@ public class PostFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onActivityCreated: from HomeFeed called");
@@ -88,12 +86,7 @@ public class PostFragment extends Fragment {
                 updateUI(postListModels);
                 mPostAdapter.setPostListModels(postListModels);
                 mPostAdapter.notifyDataSetChanged();
-
-
-
             }
         });
     }
-
-
 }

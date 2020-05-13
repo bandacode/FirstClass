@@ -4,35 +4,29 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.bumptech.glide.Glide;
-import com.example.anchat.R;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
-
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import com.bumptech.glide.Glide;
+import com.example.anchat.R;
 import com.example.anchat.data.model.Groups;
 import com.example.anchat.data.model.Posts;
 import com.example.anchat.data.model.Users;
 import com.example.anchat.data.repository.Firestore;
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -69,15 +63,17 @@ public class NewGroupFragment extends Fragment {
     public NewGroupFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.post, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_save:
 //                saveGroup
                 addGroupToFirestore();
@@ -139,35 +135,32 @@ public class NewGroupFragment extends Fragment {
             public void onClick(View view) {
                 Intent intentImageUpload = new Intent(Intent.ACTION_GET_CONTENT);
                 intentImageUpload.setType("image/*");
-                intentImageUpload.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
+                intentImageUpload.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 startActivityForResult(intentImageUpload.createChooser(intentImageUpload,
                         "Insert Picture"), REQUEST_CODE);
             }
         });
 
-        Glide.with(getContext())
+        Glide.with(requireContext())
                 .load(mUser.getPhotoUrl())
                 .into(mUserImage);
 
 
     }
 
-
-    private void addGroupToFirestore(){
+    private void addGroupToFirestore() {
         Log.d(TAG, "addGroupToFirestore: called");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null){
+        if (firebaseUser != null) {
 
-            DocumentReference documentReference = mFiresbaseFirestore.collection("GROUPS").document();
             String title = mGroupTitle.getEditableText().toString().trim();
             String desc = mGroupDesc.getText().toString();
             String image = mGroupDetails.getGroupImageUrl();
-            String groupID = documentReference.getId();
             String userID = firebaseUser.getUid();
-            if (title.length() == 0 && desc.length() ==0){
+            if (title.length() == 0 && desc.length() == 0) {
                 Toast.makeText(getContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
             } else {
-                mGroupDetails = new Groups(groupID, title,desc,image, userID);
+                mGroupDetails = new Groups(title, desc, image, userID);
                 Firestore.getGroupsReference(mFiresbaseFirestore).add(mGroupDetails).
                         addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
@@ -177,22 +170,16 @@ public class NewGroupFragment extends Fragment {
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e); }
+                        Log.w(TAG, "Error adding document", e);
+                    }
                 });
             }
-
-
-
-
         }
-
-
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
     @Override
@@ -203,10 +190,10 @@ public class NewGroupFragment extends Fragment {
         assert groupImage != null;
         final StorageReference groupImagesRef = mStoreReference.child("group_images/");
         final UploadTask uploadTask = groupImagesRef.putFile(groupImage);
-        Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if (!task.isSuccessful()){
+                if (!task.isSuccessful()) {
                     throw task.getException();
                 }
                 return groupImagesRef.getDownloadUrl();
@@ -217,7 +204,7 @@ public class NewGroupFragment extends Fragment {
                 Uri downloadUri = task.getResult();
                 Log.d(TAG, "onComplete: Image Upload Successful");
                 Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_SHORT).show();
-                if (downloadUri != null){
+                if (downloadUri != null) {
                     String photoStringLink = downloadUri.toString();
                     String imageName = groupImagesRef.getPath();
 
@@ -229,12 +216,13 @@ public class NewGroupFragment extends Fragment {
             }
         });
     }
-    private void showImage(String url){
-        if (url != null && !url.isEmpty()){
+
+    private void showImage(String url) {
+        if (url != null && !url.isEmpty()) {
             int width = Resources.getSystem().getDisplayMetrics().widthPixels;
             Glide.with(this)
                     .load(url)
-                    .override(300,200)
+                    .override(300, 200)
                     .into(mGroupImage);
         }
     }

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +21,6 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder> {
 
     private static final String TAG = "GroupAdapter";
@@ -30,24 +28,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     private Context mContext;
     private static OnGroupItemClicked onGroupItemClicked;
 
-
-
-
-    public void setGroupListModels(List<Groups> groupListModels) {
+    void setGroupListModels(List<Groups> groupListModels) {
         this.groupListModels = groupListModels;
     }
 
-    public GroupAdapter(OnGroupItemClicked onGroupItemClicked){
+    GroupAdapter(OnGroupItemClicked onGroupItemClicked) {
         this.onGroupItemClicked = onGroupItemClicked;
 
     }
-
-    public GroupAdapter(Context context, List<Groups> groupListModels) {
-        this.groupListModels = groupListModels;
-        this.mContext = context;
-    }
-
-    public GroupAdapter() {}
 
     @NonNull
     @Override
@@ -65,7 +53,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         holder.bind(mContext, groups);
     }
 
-
     @Override
     public int getItemCount() {
         return groupListModels == null ? 0 : groupListModels.size();
@@ -78,8 +65,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         private Button viewGroup;
         private CardView groupDetailsCardView;
 
-
-        public GroupViewHolder(@NonNull View itemView) {
+        GroupViewHolder(@NonNull View itemView) {
             super(itemView);
             groupTitle = itemView.findViewById(R.id.group_title);
             groupDesc = itemView.findViewById(R.id.group_description);
@@ -93,7 +79,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         }
 
         @SuppressLint("SetTextI18n")
-        public void bind(Context context, final Groups group) {
+        void bind(Context context, final Groups group) {
             if (group.getGroupImageUrl() == null) {
                 groupImage.setVisibility(View.GONE);
             } else {
@@ -104,7 +90,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             }
             groupTitle.setText(group.getGroupName());
             groupDesc.setText(group.getGroupDescription());
-
         }
 
         @Override
@@ -113,7 +98,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
         }
     }
-    public interface OnGroupItemClicked{
+
+    public interface OnGroupItemClicked {
         void onGroupClick(int position);
     }
 

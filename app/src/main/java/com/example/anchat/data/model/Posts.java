@@ -3,17 +3,16 @@ package com.example.anchat.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
-import com.google.firestore.v1.DocumentTransform;
 
-import java.util.Calendar;
 import java.util.Date;
 
 public class Posts implements Parcelable {
 
-
+    @DocumentId
     private String postID;
-    private String groupID;
+    private String groupId;
     private Users postAuthor;
     private String postTitle;
     private String postBody;
@@ -22,24 +21,23 @@ public class Posts implements Parcelable {
     private long commentsCount;
     private String postImageURL;
 
-    public Posts(Users postAuthor, String postTitle, String postBody, String postImageURL) {
+    public Posts(Users postAuthor, String postTitle, String postBody, String groupId) {
         this.postAuthor = postAuthor;
         this.postTitle = postTitle;
         this.postBody = postBody;
         this.commentsCount  = 0;
-        this.postImageURL = postImageURL;
+        this.groupId = groupId;
         this.timestamp = null;
-
     }
+
     public Posts(Users postAuthor, String postTitle, String postBody, String postImageURL, String groupId) {
         this.postAuthor = postAuthor;
         this.postTitle = postTitle;
         this.postBody = postBody;
         this.commentsCount  = 0;
         this.postImageURL = postImageURL;
-        this.groupID = groupId;
+        this.groupId = groupId;
         this.timestamp = null;
-
     }
 
     public Posts (String postTitle, String postBody, String postImageURL ){
@@ -56,24 +54,20 @@ public class Posts implements Parcelable {
 
     }
 
-    public Posts(Users postAuthor, String postID, String postText, String postBodyText, String postImage, String groupID) {
-        this.postAuthor = postAuthor;
-        this.postTitle = postText;
-        this.postBody = postBodyText;
-        this.commentsCount  = 0;
-        this.postImageURL = postImageURL;
-        this.groupID = groupID;
-        this.timestamp = null;
-
-    }
-
-
     public String getPostID() {
         return postID;
     }
 
-    public void setPostID(String postID) {
-        this.postID = postID;
+    public void setPostID(String groupId) {
+        this.postID = groupId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public Users getPostAuthor() {

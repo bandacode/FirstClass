@@ -1,6 +1,5 @@
 package com.example.anchat.data.repository;
 
-import android.media.MediaDrm;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.example.anchat.data.model.Comments;
 import com.example.anchat.data.model.Groups;
 import com.example.anchat.data.model.Posts;
-import com.example.anchat.ui.home.GroupDetailsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,7 +22,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.List;
 import java.util.Objects;
 
-
 public class PostsRepo {
     private static final String TAG = "PostsRepo";
     private OnFireStoreTaskComplete onFireStoreTaskComplete;
@@ -39,60 +36,59 @@ public class PostsRepo {
     private FirebaseAuth mAuth;
     private Comments comments = new Comments();
 
-    public PostsRepo(){}
+    public PostsRepo() {
+    }
 
-
-    public PostsRepo(commentsFirestoreTask mCommentsFirestoreTask){
+    public PostsRepo(commentsFirestoreTask mCommentsFirestoreTask) {
         this.mCommentsFirestoreTask = mCommentsFirestoreTask;
     }
 
-    public PostsRepo(OnFireStoreTaskComplete onFireStoreTaskComplete){
+    public PostsRepo(OnFireStoreTaskComplete onFireStoreTaskComplete) {
         this.onFireStoreTaskComplete = onFireStoreTaskComplete;
-
     }
-//    Method to retrieve data from database
-    public  void getPostData(){
+
+    //    Method to retrieve data from database
+    public void getPostData() {
         Log.d(TAG, "getPostData: called");
         collectionReference.
                 get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult() != null){
-                    for (QueryDocumentSnapshot document: task.getResult()){
-                        if (document.exists()){
+                if (task.isSuccessful() && task.getResult() != null) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (document.exists()) {
+                            Log.d(TAG, "getPostData: " + document.toString());
                             onFireStoreTaskComplete.postDataAdded(Objects.requireNonNull(task.getResult()).toObjects(Posts.class));
                             Log.d(TAG, document.getId() + " => " + document.getData());
-
-                        }else {
+                        } else {
                             onFireStoreTaskComplete.onError(task.getException());
                         }
                     }
-
                 }
             }
         });
     }
-    public void addPostData(final Posts posts){
+
+    public void addPostData(final Posts posts) {
         Log.d(TAG, "addPostData: Post Data added");
         this.posts = posts;
 
         final DocumentReference docRef = firestore.collection("POSTS").document();
-                docRef.set(posts)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully written!" + docRef.getId());
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
+        docRef.set(posts)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!" + docRef.getId());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error adding document", e);
             }
         });
-
     }
 
-    public void addCommentToPosts( Posts posts1, Comments comments){
+    public void addCommentToPosts(Posts posts1, Comments comments) {
         Log.d(TAG, "addCommentToPosts: Comment added to post");
         this.posts = posts1;
         this.comments = comments;
@@ -110,37 +106,37 @@ public class PostsRepo {
         });
     }
 
-    public void getCommentData(){
+    public void getCommentData() {
         Log.d(TAG, "getComment: called");
-        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        commentCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && task.getResult() != null){
-                    for (QueryDocumentSnapshot document: task.getResult()){
-                        if (document.exists()){
+                if (task.isSuccessful() && task.getResult() != null) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (document.exists()) {
                             mCommentsFirestoreTask.commentDataAdded(Objects.requireNonNull(task.getResult()).toObjects(Comments.class));
                             Log.d(TAG, document.getId() + " => " + document.getData());
-                        }else {
+                        } else {
                             mCommentsFirestoreTask.onError(task.getException());
                         }
                     }
-
                 }
             }
         });
     }
 
-
-//    Create interface to send data from repository to our ViewModel
-    public interface OnFireStoreTaskComplete{
+    //    Create interface to send data from repository to our ViewModel
+    public interface OnFireStoreTaskComplete {
         void postDataAdded(List<Posts> postsList);
-        void onError(Exception e);
-    }
-    public interface commentsFirestoreTask{
-        void commentDataAdded(List<Comments> commentsList);
+
         void onError(Exception e);
     }
 
+    public interface commentsFirestoreTask {
+        void commentDataAdded(List<Comments> commentsList);
+
+        void onError(Exception e);
+    }
 
 
 }

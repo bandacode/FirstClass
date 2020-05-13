@@ -1,6 +1,13 @@
 package com.example.anchat.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,23 +21,15 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.example.anchat.R;
 import com.example.anchat.data.model.Groups;
 import com.example.anchat.data.model.Posts;
 import com.example.anchat.ui.posts.PostAdapter;
-import com.example.anchat.ui.posts.PostFragmentArgs;
 import com.example.anchat.ui.posts.PostViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +41,7 @@ public class GroupDetailsFragment extends Fragment implements PostAdapter.OnPost
     private NavController navController, newPostSNavController;
     private int position;
     private FloatingActionButton mFab;
-//    Group Details header
+    //    Group Details header
     private ImageView mImageView;
     private TextView mGroupName;
     private ProgressBar mProgressBar;
@@ -52,10 +51,9 @@ public class GroupDetailsFragment extends Fragment implements PostAdapter.OnPost
     private NavController mPostDetailsNavController;
 
 
-
-//    Post details list
-private RecyclerView mRecyclerView;
-private PostAdapter mPostAdapter;
+    //    Post details list
+    private RecyclerView mRecyclerView;
+    private PostAdapter mPostAdapter;
 
 
     public GroupDetailsFragment() {
@@ -104,8 +102,8 @@ private PostAdapter mPostAdapter;
         });
 
 
-
     }
+
     private void setUpRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -118,29 +116,21 @@ private PostAdapter mPostAdapter;
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setGroupViewModel();
-        setPostViewModel();
-
-
-
-
-
     }
 
-    private void updateUI(List<Posts> postsList){
-        if (postsList == null || postsList.size() == 0){
+    private void updateUI(List<Posts> postsList) {
+        if (postsList == null || postsList.size() == 0) {
             mEmptyMessageContainer.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.GONE);
-
         } else {
             mEmptyMessageContainer.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-            mPostAdapter.setPostListModels(postsList);
         }
     }
 
-    public void setGroupViewModel(){
+    private void setGroupViewModel() {
         Log.d(TAG, "setGroupViewModel: initialized");
         mGroupViewModel = new ViewModelProvider(getActivity()).get(GroupViewModel.class);
         mGroupViewModel.getGroups().observe(getViewLifecycleOwner(), new Observer<List<Groups>>() {
@@ -153,36 +143,38 @@ private PostAdapter mPostAdapter;
                         .into(mImageView);
 
                 mGroupName.setText(groupsList.get(position).groupName);
-
-
-
-
-
+                setPostViewModel(groupsList.get(position).groupId);
             }
         });
     }
-    public void setPostViewModel(){
+
+    private void setPostViewModel(final String groupId) {
         Log.d(TAG, "setPostViewModel: initialized");
         mPostViewModel = new ViewModelProvider(getActivity()).get(PostViewModel.class);
         mPostViewModel.getPostsListModelData().observe(getViewLifecycleOwner(), new Observer<List<Posts>>() {
             @Override
             public void onChanged(List<Posts> postsList) {
-                updateUI(postsList);
-                mPostAdapter.setPostListModels(postsList);
+                ArrayList<Posts> posts = new ArrayList<>();
+                for (Posts post : postsList) {
+                    boolean equal = post.getGroupId().replaceAll("\\P{Print}", "").trim().equalsIgnoreCase(groupId.replaceAll("\\P{Print}", "").trim());
+                    Log.d(TAG, "THEY ARE EQUAL: " + equal + " " + post.getGroupId() + " ? " + groupId);
+                    if (equal) {
+                        Log.d(TAG, "Added to Posts");
+                        posts.add(post);
+                    }
+                }
+                updateUI(posts);
+                mPostAdapter.setPostListModels(posts);
                 mPostAdapter.notifyDataSetChanged();
             }
         });
     }
 
-
     @Override
     public void onPostClick(int position) {
-               GroupDetailsFragmentDirections.ActionNavGroupDetailsToNavPostDetails action =
-                       GroupDetailsFragmentDirections.actionNavGroupDetailsToNavPostDetails();
-               action.setItemPosition(position);
-               mPostDetailsNavController.navigate(action);
-
-
-
+        GroupDetailsFragmentDirections.ActionNavGroupDetailsToNavPostDetails action =
+                GroupDetailsFragmentDirections.actionNavGroupDetailsToNavPostDetails();
+        action.setItemPosition(position);
+        mPostDetailsNavController.navigate(action);
     }
 }

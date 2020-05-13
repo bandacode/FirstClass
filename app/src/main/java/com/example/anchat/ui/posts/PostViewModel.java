@@ -29,13 +29,12 @@ public class PostViewModel extends ViewModel implements PostsRepo.OnFireStoreTas
         return postsListModelData;
     }
 
-    public LiveData<List<Comments>> getCommentsListModelData(){
+    LiveData<List<Comments>> getCommentsListModelData(){
         if (commentListModelData == null){
             commentListModelData = new MutableLiveData<>();
         }
         return commentListModelData;
     }
-
 
     public PostViewModel(){
         Log.d(TAG, "PostViewModel: initialised");
@@ -43,24 +42,17 @@ public class PostViewModel extends ViewModel implements PostsRepo.OnFireStoreTas
         mPostsRepo.getCommentData();
     }
 
-
-
     @Override
     public void postDataAdded(List<Posts>arrayList) {
         postsListModelData.setValue(arrayList);
-
-
     }
 
     @Override
     public void commentDataAdded(List<Comments> commentsList) {
         commentListModelData.setValue(commentsList);
-
-
     }
 
     @Override
     public void onError(Exception e) {
-
     }
 }

@@ -7,25 +7,23 @@ import com.google.firebase.firestore.DocumentId;
 
 public class Groups implements Parcelable {
 
-
+    @DocumentId
     public String groupId;
     public String userId;
     public String groupName;
     public String groupDescription;
     public String groupImageUrl;
+    public Posts latestPost;
 
     public Groups() {
     }
 
-    public Groups(String groupId, String groupName, String groupDescription, String groupImageUrl) {
-        this.groupId = groupId;
+    public Groups(String groupName, String groupDescription, String groupImageUrl, String userId) {
+        this.userId = userId;
         this.groupName = groupName;
         this.groupDescription = groupDescription;
         this.groupImageUrl = groupImageUrl;
-        this.latestPost = latestPost;
     }
-
-    public Posts latestPost;
 
     protected Groups(Parcel in) {
         groupId = in.readString();
@@ -47,9 +45,7 @@ public class Groups implements Parcelable {
         this.groupDescription = desc;
         this.groupImageUrl = image;
         this.userId = userID;
-
     }
-
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
